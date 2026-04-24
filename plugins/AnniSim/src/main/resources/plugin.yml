@@ -1,0 +1,26 @@
+name: AnniSim
+version: 1.0
+main: me.munir.annisim.AnniSimPlugin
+api-version: '1.21'
+
+commands:
+  startgame:
+    description: Starts the game on the selected map
+    usage: /startgame <mapname|random_map|random_all|random_kit_loadout mapname>
+  endgame:
+    description: Ends the game
+  mute:
+    description: Mutes or unmutes a player
+    usage: /mute <player>
+  reset:
+    description: Resets the red vs blue win tracker
+    usage: /reset
+  ban:
+    description: Bans a loadout from selection
+    usage: /ban <loadout>
+  unban:
+    description: Unbans a loadout for selection
+    usage: /unban <loadout>
+  protect:
+    description: Toggles operator-only protection for key game commands
+    usage: /protect
