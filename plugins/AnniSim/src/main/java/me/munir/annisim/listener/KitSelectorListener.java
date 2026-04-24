@@ -3,6 +3,7 @@ package me.munir.annisim.listener;
 import me.munir.annisim.kit.Kit;
 import me.munir.annisim.kit.KitManager;
 import me.munir.annisim.lobby.LobbyItems;
+import me.munir.annisim.util.ModeAccess;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -33,8 +34,18 @@ public class KitSelectorListener implements Listener {
       this.kitManager = kitManager;
    }
 
+    public void openMenu(Player player) {
+      if (ModeAccess.isAnniSimActive()) {
+         player.openInventory(this.createKitSelectionMenu());
+      }
+   }
+
    @EventHandler
    public void onPlayerInteract(PlayerInteractEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       if (event.getHand() == EquipmentSlot.HAND) {
          Action action = event.getAction();
          if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
@@ -48,6 +59,10 @@ public class KitSelectorListener implements Listener {
 
    @EventHandler
    public void onInventoryClick(InventoryClickEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       if ("Select Kit".equals(event.getView().getTitle())) {
          event.setCancelled(true);
          HumanEntity var3 = event.getWhoClicked();
@@ -81,6 +96,10 @@ public class KitSelectorListener implements Listener {
 
    @EventHandler
    public void onInventoryDrag(InventoryDragEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       if ("Select Kit".equals(event.getView().getTitle())) {
          event.setCancelled(true);
       }

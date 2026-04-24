@@ -2,6 +2,7 @@ package me.munir.annisim.listener;
 
 import me.munir.annisim.lobby.LobbyItems;
 import me.munir.annisim.lobby.LobbyManager;
+import me.munir.annisim.util.ModeAccess;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +20,10 @@ public class LobbyJoinListener implements Listener {
 
    @EventHandler
    public void onPlayerJoin(PlayerJoinEvent event) {
+      if (ModeAccess.isHubControllerPresent() || !ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       Player player = event.getPlayer();
       PlayerInventory inventory = player.getInventory();
       this.lobbyManager.teleportToLobbySpawn(player);

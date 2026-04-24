@@ -49,52 +49,62 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class AnniSimPlugin extends JavaPlugin {
+   private LobbyManager lobbyManager;
+   private TeamManager teamManager;
+   private GameManager gameManager;
+   private KitSelectorListener kitSelectorListener;
+   private TeamSelectorListener teamSelectorListener;
+   private LoadoutSelectorListener loadoutSelectorListener;
+
    public void onEnable() {
       this.saveDefaultConfig();
-      LobbyManager lobbyManager = new LobbyManager(this);
+      this.lobbyManager = new LobbyManager(this);
       ArenaManager arenaManager = new ArenaManager(this);
       LobbyItems lobbyItems = new LobbyItems(this);
       RoundItems roundItems = new RoundItems(this);
-      TeamManager teamManager = new TeamManager();
+      this.teamManager = new TeamManager();
       ChatMuteManager chatMuteManager = new ChatMuteManager();
       CommandProtectionManager commandProtectionManager = new CommandProtectionManager();
       KitManager kitManager = new KitManager();
       LoadoutManager loadoutManager = new LoadoutManager(this, roundItems);
       WinTracker winTracker = new WinTracker(this);
-      GameManager gameManager = new GameManager(this, lobbyManager, arenaManager, lobbyItems, roundItems, kitManager, teamManager, loadoutManager, winTracker);
-      SuccubusManager succubusManager = new SuccubusManager(gameManager, teamManager, kitManager, roundItems);
-      ScoreboardManager scoreboardManager = new ScoreboardManager(this, gameManager, teamManager, succubusManager, winTracker);
-      DiamondListener diamondListener = new DiamondListener(this, gameManager, arenaManager, teamManager);
-      gameManager.setScoreboardManager(scoreboardManager);
-      gameManager.setDiamondListener(diamondListener);
-      lobbyManager.loadLobbyWorld();
+      this.gameManager = new GameManager(this, this.lobbyManager, arenaManager, lobbyItems, roundItems, kitManager, this.teamManager, loadoutManager, winTracker);
+      SuccubusManager succubusManager = new SuccubusManager(this.gameManager, this.teamManager, kitManager, roundItems);
+      ScoreboardManager scoreboardManager = new ScoreboardManager(this, this.gameManager, this.teamManager, succubusManager, winTracker);
+      DiamondListener diamondListener = new DiamondListener(this, this.gameManager, arenaManager, this.teamManager);
+      this.gameManager.setScoreboardManager(scoreboardManager);
+      this.gameManager.setDiamondListener(diamondListener);
+      this.lobbyManager.loadLobbyWorld();
       arenaManager.loadArenaWorld();
-      this.getServer().getPluginManager().registerEvents(new LobbyJoinListener(lobbyManager, lobbyItems), this);
-      this.getServer().getPluginManager().registerEvents(new LobbyRespawnListener(lobbyManager, arenaManager, gameManager), this);
-      this.getServer().getPluginManager().registerEvents(new LobbyProtectionListener(lobbyManager), this);
+      this.getServer().getPluginManager().registerEvents(new LobbyJoinListener(this.lobbyManager, lobbyItems), this);
+      this.getServer().getPluginManager().registerEvents(new LobbyRespawnListener(this.lobbyManager, arenaManager, this.gameManager), this);
+      this.getServer().getPluginManager().registerEvents(new LobbyProtectionListener(this.lobbyManager), this);
       this.getServer().getPluginManager().registerEvents(new LobbyItemProtectionListener(lobbyItems), this);
       this.getServer().getPluginManager().registerEvents(new LaunchPadListener(this), this);
-      this.getServer().getPluginManager().registerEvents(new TeamSelectorListener(lobbyItems, gameManager, teamManager), this);
-      this.getServer().getPluginManager().registerEvents(new TeamQuitListener(teamManager), this);
-      this.getServer().getPluginManager().registerEvents(new KitSelectorListener(lobbyItems, kitManager), this);
-      this.getServer().getPluginManager().registerEvents(new LoadoutSelectorListener(lobbyItems, gameManager, loadoutManager), this);
+      this.teamSelectorListener = new TeamSelectorListener(lobbyItems, this.gameManager, this.teamManager);
+      this.kitSelectorListener = new KitSelectorListener(lobbyItems, kitManager);
+      this.loadoutSelectorListener = new LoadoutSelectorListener(lobbyItems, this.gameManager, loadoutManager);
+      this.getServer().getPluginManager().registerEvents(this.teamSelectorListener, this);
+      this.getServer().getPluginManager().registerEvents(new TeamQuitListener(this.teamManager), this);
+      this.getServer().getPluginManager().registerEvents(this.kitSelectorListener, this);
+      this.getServer().getPluginManager().registerEvents(this.loadoutSelectorListener, this);
       this.getServer().getPluginManager().registerEvents(new GodAppleConsumeListener(this), this);
       this.getServer().getPluginManager().registerEvents(new IronArmorDurabilityListener(this), this);
-      this.getServer().getPluginManager().registerEvents(new TeamDamageListener(gameManager, teamManager), this);
+      this.getServer().getPluginManager().registerEvents(new TeamDamageListener(this.gameManager, this.teamManager), this);
       this.getServer().getPluginManager().registerEvents(new DiamondBlockProtectionListener(), this);
-      this.getServer().getPluginManager().registerEvents(new TeamChatListener(teamManager, chatMuteManager), this);
-      this.getServer().getPluginManager().registerEvents(new AcrobatListener(this, gameManager, kitManager, teamManager), this);
-      this.getServer().getPluginManager().registerEvents(new BlinkListener(this, gameManager, roundItems, kitManager), this);
+      this.getServer().getPluginManager().registerEvents(new TeamChatListener(this.teamManager, chatMuteManager), this);
+      this.getServer().getPluginManager().registerEvents(new AcrobatListener(this, this.gameManager, kitManager, this.teamManager), this);
+      this.getServer().getPluginManager().registerEvents(new BlinkListener(this, this.gameManager, roundItems, kitManager), this);
       this.getServer().getPluginManager().registerEvents(new SuccubusListener(this, succubusManager), this);
       this.getServer().getPluginManager().registerEvents(new DasherItemListener(roundItems), this);
-      this.getServer().getPluginManager().registerEvents(new ArenaMobSpawnListener(arenaManager, gameManager), this);
+      this.getServer().getPluginManager().registerEvents(new ArenaMobSpawnListener(arenaManager, this.gameManager), this);
       this.getServer().getPluginManager().registerEvents(diamondListener, this);
-      this.getServer().getPluginManager().registerEvents(new GameWinListener(this, gameManager), this);
-      this.getServer().getPluginManager().registerEvents(new GameDeathListener(this, gameManager, kitManager, loadoutManager, teamManager), this);
+      this.getServer().getPluginManager().registerEvents(new GameWinListener(this, this.gameManager), this);
+      this.getServer().getPluginManager().registerEvents(new GameDeathListener(this, this.gameManager, kitManager, loadoutManager, this.teamManager), this);
       scoreboardManager.start();
-      ((PluginCommand)Objects.requireNonNull(this.getCommand("startgame"))).setExecutor(new StartGameCommand(gameManager, arenaManager, commandProtectionManager));
+      ((PluginCommand)Objects.requireNonNull(this.getCommand("startgame"))).setExecutor(new StartGameCommand(this.gameManager, arenaManager, commandProtectionManager));
       ((PluginCommand)Objects.requireNonNull(this.getCommand("startgame"))).setTabCompleter(new StartGameTabCompleter(arenaManager));
-      ((PluginCommand)Objects.requireNonNull(this.getCommand("endgame"))).setExecutor(new EndGameCommand(gameManager));
+      ((PluginCommand)Objects.requireNonNull(this.getCommand("endgame"))).setExecutor(new EndGameCommand(this.gameManager));
       ((PluginCommand)Objects.requireNonNull(this.getCommand("mute"))).setExecutor(new MuteCommand(chatMuteManager));
       ((PluginCommand)Objects.requireNonNull(this.getCommand("reset"))).setExecutor(new ResetCommand(winTracker, commandProtectionManager));
       ((PluginCommand)Objects.requireNonNull(this.getCommand("ban"))).setExecutor(new BanLoadoutCommand(loadoutManager, gameManager, commandProtectionManager));
@@ -108,5 +118,43 @@ public class AnniSimPlugin extends JavaPlugin {
    public void onDisable() {
       this.saveConfig();
       this.getLogger().info("AnniSim plugin disabled!");
+   }
+
+   public boolean isRoundActive() {
+      return this.gameManager != null && this.gameManager.isRoundActive();
+   }
+
+   public void resetForModeSwitch() {
+      if (this.gameManager != null && this.gameManager.isRoundActive()) {
+         this.gameManager.endGame();
+      }
+
+      if (this.teamManager != null) {
+         this.teamManager.clearTeams();
+      }
+   }
+
+   public void preparePlayerForHubLobby(org.bukkit.entity.Player player) {
+      if (this.gameManager != null) {
+         this.gameManager.preparePlayerForLobby(player);
+      }
+   }
+
+   public void openTeamSelectionMenu(org.bukkit.entity.Player player) {
+      if (this.teamSelectorListener != null) {
+         this.teamSelectorListener.openMenu(player);
+      }
+   }
+
+   public void openKitSelectionMenu(org.bukkit.entity.Player player) {
+      if (this.kitSelectorListener != null) {
+         this.kitSelectorListener.openMenu(player);
+      }
+   }
+
+   public void openLoadoutSelectionMenu(org.bukkit.entity.Player player) {
+      if (this.loadoutSelectorListener != null) {
+         this.loadoutSelectorListener.openMenu(player);
+      }
    }
 }

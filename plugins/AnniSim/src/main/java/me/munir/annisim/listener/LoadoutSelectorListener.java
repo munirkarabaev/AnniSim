@@ -8,6 +8,7 @@ import me.munir.annisim.game.GameManager;
 import me.munir.annisim.loadout.LoadoutManager;
 import me.munir.annisim.loadout.LoadoutType;
 import me.munir.annisim.lobby.LobbyItems;
+import me.munir.annisim.util.ModeAccess;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -40,8 +41,18 @@ public class LoadoutSelectorListener implements Listener {
       this.loadoutManager = loadoutManager;
    }
 
+   public void openMenu(Player player) {
+      if (ModeAccess.isAnniSimActive()) {
+         player.openInventory(this.createLoadoutSelectionMenu());
+      }
+   }
+
    @EventHandler
    public void onPlayerInteract(PlayerInteractEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       if (event.getHand() == EquipmentSlot.HAND) {
          Action action = event.getAction();
          if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
@@ -55,6 +66,10 @@ public class LoadoutSelectorListener implements Listener {
 
    @EventHandler
    public void onInventoryClick(InventoryClickEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       String title = event.getView().getTitle();
       if ("Select Loadout".equals(title)) {
          this.handleSelectionClick(event);
@@ -69,6 +84,10 @@ public class LoadoutSelectorListener implements Listener {
 
    @EventHandler
    public void onInventoryDrag(InventoryDragEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       String title = event.getView().getTitle();
       if ("Select Loadout".equals(title) || this.loadoutManager.parseLayoutEditorTitle(title) != null) {
          event.setCancelled(true);
@@ -78,6 +97,10 @@ public class LoadoutSelectorListener implements Listener {
 
    @EventHandler
    public void onInventoryClose(InventoryCloseEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       HumanEntity var3 = event.getPlayer();
       if (var3 instanceof Player) {
          Player player = (Player)var3;

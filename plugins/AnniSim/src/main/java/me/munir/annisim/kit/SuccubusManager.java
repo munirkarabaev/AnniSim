@@ -64,22 +64,29 @@ public class SuccubusManager {
    public boolean shouldShowEnemyHealth(Player player) {
       if (!this.gameManager.isInGame()) {
          return false;
-      } else if (!this.teamManager.isActivePlayer(player)) {
-         return false;
       } else {
-         return this.kitManager.getKit(player) == Kit.SUCCUBUS;
+         Team team = this.teamManager.getTeam(player);
+         if (team == Team.SPECTATOR) {
+            return true;
+         } else if (!this.teamManager.isActivePlayer(player)) {
+            return false;
+         } else {
+            return this.kitManager.getKit(player) == Kit.SUCCUBUS;
+         }
       }
    }
 
    public boolean shouldShowEnemyHealth(Player viewer, Player observed) {
       if (!this.shouldShowEnemyHealth(viewer)) {
          return false;
-      } else if (!this.teamManager.isActivePlayer(observed)) {
-         return false;
       } else {
          Team viewerTeam = this.teamManager.getTeam(viewer);
          Team observedTeam = this.teamManager.getTeam(observed);
-         if (viewerTeam != null && observedTeam != null && viewerTeam != observedTeam) {
+         if (viewerTeam == Team.SPECTATOR) {
+            return !viewer.getUniqueId().equals(observed.getUniqueId()) && viewer.getWorld().getUID().equals(observed.getWorld().getUID());
+         } else if (!this.teamManager.isActivePlayer(observed)) {
+            return false;
+         } else if (viewerTeam != null && observedTeam != null && viewerTeam != observedTeam) {
             return viewer.getWorld().getUID().equals(observed.getWorld().getUID()) && viewer.getLocation().distanceSquared(observed.getLocation()) <= 169.0D;
          } else {
             return false;

@@ -2,9 +2,13 @@ package me.munir.annisim.command;
 
 import me.munir.annisim.arena.ArenaManager;
 import me.munir.annisim.game.GameManager;
+import me.munir.annisim.util.ModeAccess;
+import java.lang.reflect.Method;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
 
 public class StartGameCommand implements CommandExecutor {
    private final GameManager gameManager;
@@ -18,6 +22,10 @@ public class StartGameCommand implements CommandExecutor {
    }
 
    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return this.delegateToRushSim(sender, args);
+      }
+
       if (!this.commandProtectionManager.canUseProtectedCommand(sender)) {
          sender.sendMessage("Only operators can use this command while protected mode is enabled.");
          return true;
@@ -36,5 +44,22 @@ public class StartGameCommand implements CommandExecutor {
          sender.sendMessage("Starting " + startGameRequest.getCountdownLabel() + " in 5 seconds.");
          return true;
       }
+   }
+
+   private boolean delegateToRushSim(CommandSender sender, String[] args) {
+      Plugin rushSim = Bukkit.getPluginManager().getPlugin("RushSim");
+      if (rushSim == null || !rushSim.isEnabled()) {
+         sender.sendMessage("RushSim is not available.");
+         return true;
+      }
+
+      try {
+         Method method = rushSim.getClass().getMethod("handleSharedStartGame", CommandSender.class, String[].class);
+         method.invoke(rushSim, sender, args);
+      } catch (ReflectiveOperationException exception) {
+         sender.sendMessage("RushSim start command is unavailable.");
+      }
+
+      return true;
    }
 }

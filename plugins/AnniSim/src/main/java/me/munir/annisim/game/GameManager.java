@@ -20,6 +20,7 @@ import me.munir.annisim.lobby.LobbyManager;
 import me.munir.annisim.scoreboard.ScoreboardManager;
 import me.munir.annisim.team.Team;
 import me.munir.annisim.team.TeamManager;
+import me.munir.annisim.util.ModeAccess;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -201,6 +202,10 @@ public class GameManager {
    }
 
    public boolean isInGame() {
+      return this.gameState == GameState.IN_GAME && ModeAccess.isAnniSimActive();
+   }
+
+   public boolean isRoundActive() {
       return this.gameState == GameState.IN_GAME;
    }
 

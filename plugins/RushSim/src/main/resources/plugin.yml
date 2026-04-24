@@ -1,0 +1,7 @@
+name: RushSim
+version: 1.0
+main: me.munir.rushsim.RushSimPlugin
+api-version: '1.21'
+commands:
+  rushreload:
+    description: Reloads RushSim config

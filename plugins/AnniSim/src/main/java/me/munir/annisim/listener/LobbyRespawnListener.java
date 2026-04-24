@@ -5,6 +5,7 @@ import me.munir.annisim.game.GameManager;
 import me.munir.annisim.game.GameState;
 import me.munir.annisim.lobby.LobbyManager;
 import me.munir.annisim.team.Team;
+import me.munir.annisim.util.ModeAccess;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,10 @@ public class LobbyRespawnListener implements Listener {
 
    @EventHandler
    public void onPlayerRespawn(PlayerRespawnEvent event) {
+      if (!ModeAccess.isAnniSimActive()) {
+         return;
+      }
+
       if (this.gameManager.getGameState() == GameState.IN_GAME) {
          if (this.gameManager.getSpectatorRespawnLocation(event.getPlayer()) != null) {
             event.setRespawnLocation(this.gameManager.getSpectatorRespawnLocation(event.getPlayer()));

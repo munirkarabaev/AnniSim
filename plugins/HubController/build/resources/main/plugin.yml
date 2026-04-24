@@ -1,0 +1,8 @@
+name: HubController
+version: 1.0
+main: me.munir.hubcontroller.HubControllerPlugin
+api-version: '1.21'
+commands:
+  mode:
+    description: Switches the active server mode
+    usage: /mode <annisim|rushsim>
