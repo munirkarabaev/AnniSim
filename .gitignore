@@ -1,0 +1,28 @@
+# Generated plugin builds and IDE files
+**/.gradle/
+**/build/
+**/.idea/
+**/out/
+*.class
+*.iml
+.DS_Store
+
+# Local credentials
+.env
+.env.*
+!.env.example
+
+# Local server installation: only retain the existing map assets
+/servers/test-server/*
+!/servers/test-server/lobby/
+!/servers/test-server/coastal_template/
+**/playerdata/
+**/stats/
+**/advancements/
+**/session.lock
+**/uid.dat
+**/level.dat_old
+
+# Root-level packaged metadata is generated, not source
+/META-INF/
+/plugin.yml
