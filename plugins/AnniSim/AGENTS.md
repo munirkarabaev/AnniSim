@@ -38,20 +38,14 @@ A team-based Minecraft minigame with:
 - spectator mode on death
 - diamond objective and elimination win condition later
 
-## Current milestone
-Implement only the lobby join items system.
+## Current baseline
 
-When a player joins:
-- clear their inventory
-- give them a team selector item
-- give them a kit selector item
-
-Do not implement GUI selection yet.
-Do not implement teams yet.
-Do not implement kits yet.
-Do not implement startgame yet.
-Do not implement scoreboards yet.
-Do not implement diamond logic yet.
+The plugin now includes lobby menus, teams, kits and abilities, round commands,
+scoreboards and diamond objectives. The earlier lobby-only milestone is obsolete.
+Read the root README and docs/MAINTENANCE.md before planning further changes.
+Keep local server installations, generated builds, logs and player records out of Git.
+Existing lobby/coastal map assets remain in the repository; server binaries and
+other map templates must be provided separately for a fresh test installation.
 
 ## Developer Commands
 
