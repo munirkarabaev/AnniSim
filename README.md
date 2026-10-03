@@ -79,6 +79,7 @@ On macOS/Linux, use `sh ./gradlew clean build` in each of those directories. Out
 4. Use copies of the `lobby` and `coastal_template` assets as starting assets. The default AnniSim arena uses `coastal` / `coastal_template`.
 5. Check the world names and spawn coordinates in [ArenaMap.java](plugins/AnniSim/src/main/java/me/munir/annisim/arena/ArenaMap.java) and [LobbyManager.java](plugins/AnniSim/src/main/java/me/munir/annisim/lobby/LobbyManager.java). The other map templates referenced by the code are not bundled. RushSim's default configuration also references `CleanMaps` / `CleanMaps_template`, which must be supplied separately.
 6. Start the server, confirm that the plugins enabled, and use an operator account to run `/protect` before admitting players. Current protected-command mode defaults to off and is not persisted across restarts.
+7. For the bundled coastal template, use `/startgame coastalv3`. The similarly named `/startgame coastal` selects a different arena in the missing `CleanMaps` world.
 
 This is a development setup outline, not a claim that a fresh server has been verified end to end. Server software, local configuration and full map assets are not supplied as a ready-to-run installation.
 
